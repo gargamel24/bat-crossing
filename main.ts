@@ -1,8 +1,38 @@
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     bat.y -= 16
 })
+scene.onOverlapTile(SpriteKind.Player, sprites.builtin.forestTiles0, function (sprite, location) {
+	if(heldBerry != null){
+        tiles.placeOnTile(heldBerry, location)
+        heldBerry.setImage(img``)
+        heldBerry = null
+    }
+})
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     bat.x -= 16
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (playerSprite, berrySprite) {
+    if (heldBerry == null) {
+        heldBerry = berrySprite
+        berrySprite.setImage(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `)
+    }
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     bat.x += 16
@@ -10,8 +40,37 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     bat.y += 16
 })
-let rightCar: Sprite = null
+function spawnBerries (numBerries: number, startColumn: number, startRow: number, gap: number) {
+    for (let index = 0; index < numBerries; index++) {
+        berry = sprites.create(img`
+            . . . . . . . 6 . . . . . . . . 
+            . . . . . . 8 6 6 . . . 6 8 . . 
+            . . . e e e 8 8 6 6 . 6 7 8 . . 
+            . . e 2 2 2 2 e 8 6 6 7 6 . . . 
+            . e 2 2 4 4 2 7 7 7 7 7 8 6 . . 
+            . e 2 4 4 2 6 7 7 7 6 7 6 8 8 . 
+            e 2 4 5 2 2 6 7 7 6 2 7 7 6 . . 
+            e 2 4 4 2 2 6 7 6 2 2 6 7 7 6 . 
+            e 2 4 2 2 2 6 6 2 2 2 e 7 7 6 . 
+            e 2 4 2 2 4 2 2 2 4 2 2 e 7 6 . 
+            e 2 4 2 2 2 2 2 2 2 2 2 e c 6 . 
+            e 2 2 2 2 2 2 2 4 e 2 e e c . . 
+            e e 2 e 2 2 4 2 2 e e e c . . . 
+            e e e e 2 e 2 2 e e e c . . . . 
+            e e e 2 e e c e c c c . . . . . 
+            . c c c c c c c . . . . . . . . 
+            `, SpriteKind.Food)
+        berry.z = -1
+        tiles.placeOnTile(berry, tiles.getTileLocation(startColumn, startRow))
+        startColumn += 1 + gap
+    }
+}
 let left_car: Sprite = null
+let startColumn = 0
+let berry: Sprite = null
+let rightCar = null
+let leftcar = null
+let heldBerry: Sprite = null
 let bat: Sprite = null
 tiles.setTilemap(tilemap`level1`)
 bat = sprites.create(img`
@@ -83,3 +142,5 @@ game.onUpdateInterval(500, function () {
     rightCar.vx = 50
     rightCar.setFlag(SpriteFlag.DestroyOnWall, true)
 })
+
+spawnBerries( 4, 2, 1, 1)
