@@ -3,9 +3,13 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.builtin.forestTiles0, function (sprite, location) {
 	if(heldBerry != null){
+        info.startCountdown(crossingTime)
         tiles.placeOnTile(heldBerry, location)
         heldBerry.setImage(img``)
         heldBerry = null
+    if(berriesLeft == 0){
+        game.over(true)
+    }
     }
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -13,25 +17,27 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (playerSprite, berrySprite) {
     if (heldBerry == null) {
+        info.startCountdown(crossingTime)
         heldBerry = berrySprite
         berrySprite.setImage(img`
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            `)
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+        `)
+            berriesLeft -= 1
     }
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -43,23 +49,23 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
 function spawnBerries (numBerries: number, startColumn: number, startRow: number, gap: number) {
     for (let index = 0; index < numBerries; index++) {
         berry = sprites.create(img`
-            . . . . . . . 6 . . . . . . . . 
-            . . . . . . 8 6 6 . . . 6 8 . . 
-            . . . e e e 8 8 6 6 . 6 7 8 . . 
-            . . e 2 2 2 2 e 8 6 6 7 6 . . . 
-            . e 2 2 4 4 2 7 7 7 7 7 8 6 . . 
-            . e 2 4 4 2 6 7 7 7 6 7 6 8 8 . 
-            e 2 4 5 2 2 6 7 7 6 2 7 7 6 . . 
-            e 2 4 4 2 2 6 7 6 2 2 6 7 7 6 . 
-            e 2 4 2 2 2 6 6 2 2 2 e 7 7 6 . 
-            e 2 4 2 2 4 2 2 2 4 2 2 e 7 6 . 
-            e 2 4 2 2 2 2 2 2 2 2 2 e c 6 . 
-            e 2 2 2 2 2 2 2 4 e 2 e e c . . 
-            e e 2 e 2 2 4 2 2 e e e c . . . 
-            e e e e 2 e 2 2 e e e c . . . . 
-            e e e 2 e e c e c c c . . . . . 
-            . c c c c c c c . . . . . . . . 
-            `, SpriteKind.Food)
+            . . . . . . . 6 . . . . . . . .
+            . . . . . . 8 6 6 . . . 6 8 . .
+            . . . e e e 8 8 6 6 . 6 7 8 . .
+            . . e 2 2 2 2 e 8 6 6 7 6 . . .
+            . e 2 2 4 4 2 7 7 7 7 7 8 6 . .
+            . e 2 4 4 2 6 7 7 7 6 7 6 8 8 .
+            e 2 4 5 2 2 6 7 7 6 2 7 7 6 . .
+            e 2 4 4 2 2 6 7 6 2 2 6 7 7 6 .
+            e 2 4 2 2 2 6 6 2 2 2 e 7 7 6 .
+            e 2 4 2 2 4 2 2 2 4 2 2 e 7 6 .
+            e 2 4 2 2 2 2 2 2 2 2 2 e c 6 .
+            e 2 2 2 2 2 2 2 4 e 2 e e c . .
+            e e 2 e 2 2 4 2 2 e e e c . . .
+            e e e e 2 e 2 2 e e e c . . . .
+            e e e 2 e e c e c c c . . . . .
+            . c c c c c c c . . . . . . . .
+        `, SpriteKind.Food)
         berry.z = -1
         tiles.placeOnTile(berry, tiles.getTileLocation(startColumn, startRow))
         startColumn += 1 + gap
@@ -115,10 +121,10 @@ game.onUpdateInterval(500, function () {
         `, SpriteKind.Enemy)
     tiles.placeOnRandomTile(left_car, assets.tile`myTile`)
     left_car.x = 180
-    left_car.vx = -50
+    left_car.vx = -80 + 5 * berriesLeft
     left_car.setFlag(SpriteFlag.DestroyOnWall, true)
 })
-game.onUpdateInterval(500, function () {
+game.onUpdateInterval(700, function () {
     rightCar = sprites.create(img`
         ....ffffff.........ccc..
         ....ff22ccf.......cc4f..
@@ -139,8 +145,16 @@ game.onUpdateInterval(500, function () {
         `, SpriteKind.Enemy)
     tiles.placeOnRandomTile(rightCar, assets.tile`myTile`)
     rightCar.x = -20
-    rightCar.vx = 50
+    rightCar.vx = 70 - 5 * berriesLeft
     rightCar.setFlag(SpriteFlag.DestroyOnWall, true)
 })
 
-spawnBerries( 4, 2, 1, 1)
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function(sprite: Sprite, otherSprite: Sprite) {
+info.changeLifeBy(-1)
+otherSprite.destroy()
+})
+let crossingTime = 20
+let berriesLeft = 4
+info.setLife(1)
+spawnBerries( berriesLeft, 2, 1, 1)
+info.startCountdown(crossingTime)
